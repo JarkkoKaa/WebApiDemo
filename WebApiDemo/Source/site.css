@@ -1,6 +1,51 @@
-﻿h1 {
-    color: #ff0000;
+﻿.header {
+    background-color: #c7c7c7;
+    padding: 25px;
+    margin-bottom: 10px;
 }
-.dataDiv {
-    
+
+h1 {
+    color: #242424;
+    font-size: 48px;
+}
+
+table {
+    border: solid thin;
+    border-collapse: collapse;
+}
+
+@media(max-width: 1024px) {
+    table {
+        width: 100%;
+    }
+}
+
+@media(min-width: 1024px) {
+    table {
+        width: 70%;
+    }
+}
+
+thead {
+    border: solid thin;
+    background-color: #8e8ef8;
+}
+
+td, th {
+    padding: 10px;
+    text-align: left;
+}
+
+.footer {
+    margin-top: 15px;
+    border-top: solid thin;
+    border-color: #c7c7c7;
+    background-color: #f9f9f9;
+    color: #4c4c4c;
+    text-align: left;
+    padding: 10px
+}
+
+.footer > p {
+    margin-left: 10px;
 }
