@@ -10,3 +10,5 @@ Entity Framework Core In-memory database
 ## Frontend
 * TypeScript
 * Gulp
+
+Visual Studio 2017 project
