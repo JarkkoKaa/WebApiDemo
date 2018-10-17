@@ -9,57 +9,90 @@ using WebApiDemo.Models;
 namespace WebApiDemo.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Books")]
+    [Route("api/[controller]")]
     public class BooksController : Controller
     {
-        private readonly List<Book> books;
-        public BooksController()
+        private readonly BookContext _context;
+        public BooksController(BookContext context)
         {
-            Book book1 = new Book
+            _context = context;
+
+            if (_context.Books.Count() == 0)
             {
-                Id = 1,
-                Name = "Book 1",
-                Author = "Arthur Example",
-                ReleaseYear = 2017
-            };
-            Book book2 = new Book
-            {
-                Id = 2,
-                Name = "Book 2, the example",
-                Author = "Lisa Writer",
-                ReleaseYear = 2012
-            };
-            Book book3 = new Book
-            {
-                Id = 3,
-                Name = "Cook Book",
-                Author = "Terry Chef",
-                ReleaseYear = 2001
-            };
-            books = new List<Book>
-            {
-                book1,
-                book2,
-                book3
-            };
+                _context.Books.Add(new Book { Name = "Book 1", Author = "Arthur Example", ReleaseYear = 2017 });
+                _context.Books.Add(new Book { Name = "Book 2, the example", Author = "Lisa Writer", ReleaseYear = 2012 });
+                _context.Books.Add(new Book { Name = "Cook Book", Author = "Terry Chef", ReleaseYear = 2001 });
+                _context.SaveChanges();
+            }
         }
-        // GET: api/Book
+        // GET: api/Books
         [HttpGet]
         public object Get()
         {
-            return books;
+            return _context.Books.ToList();
         }
 
-        // GET: api/Book/5
+        // GET: api/Books/5
         [HttpGet("{id}", Name = "Get")]
         public IActionResult Get(int id)
         {
-            var item = books.FirstOrDefault(b => b.Id == id);
-            if(item == null)
+            var item = _context.Books.FirstOrDefault(b => b.Id == id);
+            if (item == null)
             {
                 return BadRequest();
             }
             return new ObjectResult(item);
+        }
+
+        // POST: api/Books
+        [HttpPost]
+        public IActionResult Create([FromBody] Book book)
+        {
+            if (String.IsNullOrEmpty(book.Name))
+                book.Name = "Unknown book";
+            if (String.IsNullOrEmpty(book.Author))
+                book.Author = "Unknown author";
+            if (book.ReleaseYear == 0)
+                book.ReleaseYear = 1900;
+
+            _context.Books.Add(book);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("Get", new { id = book.Id }, book);
+        }
+
+        // PUT: api/Books/5
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, [FromBody] Book book)
+        {
+            var item = _context.Books.Find(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            item.Name = book.Name;
+            item.Author = book.Author;
+            item.ReleaseYear = book.ReleaseYear;
+
+            _context.Books.Update(item);
+            _context.SaveChanges();
+            return NoContent();
+        }
+
+        // DELETE: api/Books/5
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var item = _context.Books.Find(id);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            _context.Books.Remove(item);
+            _context.SaveChanges();
+            return NoContent();
         }
     }
 }
